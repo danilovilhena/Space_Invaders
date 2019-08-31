@@ -17,18 +17,18 @@ var alien;
 
 var canhaoX = 675;
 var canhaoY = 529;
-var laserX = 688;
+var laserX = 692;
 var laserY = 520;
 var alienX = 0;
 var alienY = 0;
 var inicioLaser = false;
 var impactoLaserX;
 var laserMovendo;
-var intervalo = 10;
+var intervalo = 1;
 var posicao = 0;
 
-var alienLinhas = [220, 270, 320, 370, 420, 470, 520, 570, 620, 670, 720, 770, 820, 870, 920, 970, 1020, 1070, 1120];
-var alienColunas = [55, 85, 115, 145, 175];
+var alienLinhas = [220, 320, 420, 520, 620, 720, 820, 920, 1020, 1120];
+var alienColunas = [35, 85, 135, 185, 235];
 var aliensRestantes = [];
 
 const C_ALTURA = 600;
@@ -44,7 +44,6 @@ iniciar(); // Chama função inicial do jogo
 
 
 // Sub-rotinas (funções)
-
 function iniciar() {
     tela = document.getElementById("tela");
     c = tela.getContext("2d");
@@ -65,11 +64,10 @@ function posicionarAlien() {
                 posY : alienColunas[j],
                 foiAtingido : false
 			};
-			
             aliensRestantes[aliensRestantes.length] = novoAlien;
         }
     }
-}    
+}
 
 function carregarImagens() {
     canhao = new Image();
@@ -82,7 +80,7 @@ function carregarImagens() {
     laser.src = "laser.png";
     
     alien = new Image();
-    alien.src = "alien.png";
+    alien.src = "alien.gif";
 }
 
 function moverAliens(){
@@ -106,10 +104,9 @@ function moverAliens(){
         
         for (var i = 0; i < aliensRestantes.length; i++){
             if (!aliensRestantes[i].foiAtingido){
-                c.fillRect((alienX + aliensRestantes[i].posX - 1), (alienY + aliensRestantes[i].posY - 1), 20, 25);
+                c.fillRect((alienX + aliensRestantes[i].posX - 1), (alienY + aliensRestantes[i].posY - 1), 32, 32);
                 c.drawImage(alien, (alienX + aliensRestantes[i].posX), (alienY + aliensRestantes[i].posY));
-				
-                if ((aliensRestantes[i].posY + alienY + 23) >= 540){
+				if ((aliensRestantes[i].posY + alienY + 30) >= 540){
                     fimDeJogo();
                 }
             }
@@ -118,11 +115,11 @@ function moverAliens(){
 
 function alienAtingido(){
     for(var i = 0; i < aliensRestantes.length; i++){
-        if ((laserY >= (alienY + aliensRestantes[i].posY)) && (laserY <= (alienY + aliensRestantes[i].posY + 20)) && 
-            (impactoLaserX >= (alienX + aliensRestantes[i].posX - 5)) && (impactoLaserX <= (alienX + aliensRestantes[i].posX + 18))){
+        if ((laserY >= (alienY + aliensRestantes[i].posY)) && (laserY <= (alienY + aliensRestantes[i].posY + 32)) && 
+            (impactoLaserX >= (alienX + aliensRestantes[i].posX - 5)) && (impactoLaserX <= (alienX + aliensRestantes[i].posX + 30))){
             if (!aliensRestantes[i].foiAtingido){
                 c.fillStyle = "#003366";
-                c.fillRect((alienX + aliensRestantes[i].posX - 1), (alienY + aliensRestantes[i].posY - 1), 20, 25);
+                c.fillRect((alienX + aliensRestantes[i].posX - 2), (alienY + aliensRestantes[i].posY - 2), 32, 32);
                 aliensRestantes[i].foiAtingido = true;
                 c.fillRect(impactoLaserX, laserY, 6, 19);
                 laserY = 0;
@@ -162,17 +159,17 @@ function moverCanhao(tecla){
     
     if ((codigo == TECLA_DIREITA) && (canhaoX <= 1350)){
         c.fillStyle = "#003366";
-        c.fillRect(canhaoX, 537, 31, 19);
-        canhaoX += 8;
-        laserX += 8;
+        c.fillRect(canhaoX, 537, 40, 40);
+        canhaoX += 15;
+        laserX += 15;
 		c.drawImage(canhao, canhaoX, canhaoY);
     }
     
     if ((codigo == TECLA_ESQUERDA) && (canhaoX >= 9)){
         c.fillStyle = "#003366";
-        c.fillRect(canhaoX, 537, 31, 19);
-        canhaoX -= 8;
-        laserX -= 8;
+        c.fillRect(canhaoX, 537, 40, 40);
+        canhaoX -= 15;
+        laserX -= 15;
 		c.drawImage(canhao, canhaoX, canhaoY);
     }
     

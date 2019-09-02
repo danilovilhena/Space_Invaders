@@ -24,11 +24,12 @@ var alienY = 0;
 var inicioLaser = false;
 var impactoLaserX;
 var laserMovendo;
-var intervalo = 1;
+var velocidadeAlien = 15;
 var posicao = 0;
+var cont = 0;
 
 var alienLinhas = [220, 320, 420, 520, 620, 720, 820, 920, 1020, 1120];
-var alienColunas = [35, 85, 135, 185, 235];
+var alienColunas = [35, 85, 135, 185];
 var aliensRestantes = [];
 
 const C_ALTURA = 600;
@@ -52,7 +53,7 @@ function iniciar() {
     posicionarAlien();
     carregarImagens();
 
-	setInterval("moverAliens()", intervalo);
+	setInterval("moverAliens()", velocidadeAlien);
     setInterval("alienAtingido()", 6);
 }    
 
@@ -112,7 +113,6 @@ function moverAliens(){
             }
         }
 }
-
 function alienAtingido(){
     for(var i = 0; i < aliensRestantes.length; i++){
         if ((laserY >= (alienY + aliensRestantes[i].posY)) && (laserY <= (alienY + aliensRestantes[i].posY + 32)) && 
@@ -123,6 +123,10 @@ function alienAtingido(){
                 aliensRestantes[i].foiAtingido = true;
                 c.fillRect(impactoLaserX, laserY, 6, 19);
                 laserY = 0;
+                cont++;
+                if(cont==40){
+                    fimDeJogoVitoria();
+                }
             }
         }
     }    
@@ -142,9 +146,37 @@ function fimDeJogo(){
 	c.fillRect(0, 0, C_LARGURA, C_ALTURA);
     
     c.textAlign = "center";
-    c.font = "40px Rockwell";
+    c.font = "40px Impact";
     c.fillStyle = "white";
-    c.fillText("Fim de Jogo! Aperte espaço para reiniciar", C_LARGURA/2, C_ALTURA/2);
+    c.fillText("Fim de Jogo!", C_LARGURA/2, C_ALTURA/2);
+    c.fillText("Aperte espaço para reiniciar", C_LARGURA/2, (C_ALTURA/2)+45);
+    window.addEventListener("keydown",checkKeyPress, false);
+    function checkKeyPress(key){
+        if (key.keyCode == "32"){
+            location.reload();
+        }
+    }
+    onkeydown = null;
+}
+
+function fimDeJogoVitoria(){
+    canhaoX = 180;
+    laserX = 193;
+    laserY = 520;
+    alienX = 0;
+    alienY = 0;
+    posicao = 0;
+    aliensRestantes = [];
+    inicioLaser = false;
+	
+    c.fillStyle = "black";
+	c.fillRect(0, 0, C_LARGURA, C_ALTURA);
+    
+    c.textAlign = "center";
+    c.font = "40px Impact";
+    c.fillStyle = "white";
+    c.fillText("Parabéns, você venceu!", C_LARGURA/2, C_ALTURA/2);
+    c.fillText("Caso queira jogar novamente, aperte espaço para reiniciar", C_LARGURA/2, (C_ALTURA/2)+45);
     window.addEventListener("keydown",checkKeyPress, false);
     function checkKeyPress(key){
         if (key.keyCode == "32"){

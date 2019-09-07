@@ -13,7 +13,10 @@ var c;
 
 var canhao;
 var laser;
-var alien;
+var alien_linha1;
+var alien_linha2;
+var alien_linha3;
+var alien_linha4;
 
 var canhaoX = 675;
 var canhaoY = 529;
@@ -80,8 +83,17 @@ function carregarImagens() {
     laser = new Image();
     laser.src = "laser.png";
     
-    alien = new Image();
-    alien.src = "alien.gif";
+    alien_linha1 = new Image();
+    alien_linha1.src = "alien_linha1.gif";
+
+    alien_linha2 = new Image();
+    alien_linha2.src = "alien_linha2.gif";
+
+    alien_linha3 = new Image();
+    alien_linha3.src = "alien_linha3.gif";
+
+    alien_linha4 = new Image();
+    alien_linha4.src = "alien_linha4.gif";
 }
 
 function moverAliens(){
@@ -105,8 +117,11 @@ function moverAliens(){
         
         for (var i = 0; i < aliensRestantes.length; i++){
             if (!aliensRestantes[i].foiAtingido){
-                c.fillRect((alienX + aliensRestantes[i].posX - 1), (alienY + aliensRestantes[i].posY - 1), 32, 32);
-                c.drawImage(alien, (alienX + aliensRestantes[i].posX), (alienY + aliensRestantes[i].posY));
+                c.fillRect((alienX + aliensRestantes[i].posX - 1), (alienY + aliensRestantes[i].posY - 1), 34, 34);
+                c.drawImage(alien_linha1, (alienX + aliensRestantes[i].posX), (alienY + aliensRestantes[0].posY));
+                c.drawImage(alien_linha2, (alienX + aliensRestantes[i].posX), (alienY + aliensRestantes[1].posY));
+                c.drawImage(alien_linha3, (alienX + aliensRestantes[i].posX), (alienY + aliensRestantes[2].posY));
+                c.drawImage(alien_linha4, (alienX + aliensRestantes[i].posX), (alienY + aliensRestantes[3].posY));
 				if ((aliensRestantes[i].posY + alienY + 30) >= 540){
                     fimDeJogo();
                 }
@@ -115,11 +130,11 @@ function moverAliens(){
 }
 function alienAtingido(){
     for(var i = 0; i < aliensRestantes.length; i++){
-        if ((laserY >= (alienY + aliensRestantes[i].posY)) && (laserY <= (alienY + aliensRestantes[i].posY + 32)) && 
+        if ((laserY >= (alienY + aliensRestantes[i].posY)) && (laserY <= (alienY + aliensRestantes[i].posY + 34)) && 
             (impactoLaserX >= (alienX + aliensRestantes[i].posX - 5)) && (impactoLaserX <= (alienX + aliensRestantes[i].posX + 30))){
             if (!aliensRestantes[i].foiAtingido){
                 c.fillStyle = "#003366";
-                c.fillRect((alienX + aliensRestantes[i].posX - 2), (alienY + aliensRestantes[i].posY - 2), 32, 32);
+                c.fillRect((alienX + aliensRestantes[i].posX - 2), (alienY + aliensRestantes[i].posY - 2), 34, 34);
                 aliensRestantes[i].foiAtingido = true;
                 c.fillRect(impactoLaserX, laserY, 6, 19);
                 laserY = 0;
@@ -189,7 +204,7 @@ function fimDeJogoVitoria(){
 function moverCanhao(tecla){
     var codigo = tecla.keyCode;
     
-    if ((codigo == TECLA_DIREITA) && (canhaoX <= 1350)){
+    if ((codigo == TECLA_DIREITA) && (canhaoX <= 1)){
         c.fillStyle = "#003366";
         c.fillRect(canhaoX, 537, 40, 40);
         canhaoX += 15;

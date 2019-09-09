@@ -118,7 +118,7 @@ function moverAliens(){
         for (var i = 0; i < aliensRestantes.length; i++){
             if (!aliensRestantes[i].foiAtingido){
                 c.fillRect((alienX + aliensRestantes[i].posX - 1), (alienY + aliensRestantes[i].posY - 1), 34, 34);
-                //A partir daqui é força bruta visando funcionar
+                //A partir daqui é força bruta
                 // Coluna 1
                 if(i==0){
                     c.drawImage(alien_linha1, (alienX + aliensRestantes[i].posX), (alienY + aliensRestantes[0].posY));
@@ -256,6 +256,7 @@ function moverAliens(){
         }
         
 }
+
 function alienAtingido(){
     for(var i = 0; i < aliensRestantes.length; i++){
         if ((laserY >= (alienY + aliensRestantes[i].posY)) && (laserY <= (alienY + aliensRestantes[i].posY + 34)) && 

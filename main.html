@@ -15,8 +15,8 @@ body {
 }
 #score {
     color: #003366;
-    font-family: Gill Sans;
-    font-size: 300%;
+    font-family: Roboto;
+    font-size: 200%;
     position: left;
 }
 </style>
@@ -28,12 +28,7 @@ body {
 
     var canhao;
     var laser;
-    //var alien_linha = [];
-    var alien_linha1;
-    var alien_linha2;
-    var alien_linha3;
-    var alien_linha4;
-    var alien_linha5;
+    var alien_linha = [];
 
     var canhaoX = 390;
     var canhaoY = 600;
@@ -96,32 +91,22 @@ body {
         canhao.onload = function(){
             c.drawImage(canhao, canhaoX, canhaoY);
         }
-        
         laser = new Image();
         laser.src = "laser.png";
+        alien_linha[0] = new Image();
+        alien_linha[0].src = "alien_linha1.gif";
 
-/*
-        for (var i = 0; i < 4; i++) {
-            alien_linha[i] = new Image();
-            alien_linha[i].src = "alien_linha"+(i+1)+".gif";
-        }
-    }
-*/
+        alien_linha[1] = new Image();
+        alien_linha[1].src = "alien_linha2.gif";
 
-        alien_linha1 = new Image();
-        alien_linha1.src = "alien_linha1.gif";
+        alien_linha[2] = new Image();
+        alien_linha[2].src = "alien_linha3.png";
 
-        alien_linha2 = new Image();
-        alien_linha2.src = "alien_linha2.gif";
+        alien_linha[3] = new Image();
+        alien_linha[3].src = "alien_linha4.gif";
 
-        alien_linha3 = new Image();
-        alien_linha3.src = "alien_linha3.gif";
-
-        alien_linha4 = new Image();
-        alien_linha4.src = "alien_linha4.gif";
-
-        alien_linha5 = new Image();
-        alien_linha5.src = "alien_linha5.png";
+        alien_linha[4] = new Image();
+        alien_linha[4].src = "alien_linha5.png";
     }
 
     function moverAliens(){
@@ -146,145 +131,22 @@ body {
             for (var i = 0; i < aliensRestantes.length; i++){
                 if (!aliensRestantes[i].foiAtingido){
                     c.fillRect((alienX + aliensRestantes[i].posX - 1), (alienY + aliensRestantes[i].posY - 1), 34, 34);
-                    for (var j =0 ; j<4; j++){
                     // A partir daqui é força bruta
-                    if(i==0){
-                        c.drawImage(alien_linha1, (alienX + aliensRestantes[i].posX), (alienY + aliensRestantes[0].posY));
-                    }
-                    else if(i==1){
-                        c.drawImage(alien_linha2, (alienX + aliensRestantes[i].posX), (alienY + aliensRestantes[1].posY));
-                    }
-                    else if (i==2){
-                        c.drawImage(alien_linha3, (alienX + aliensRestantes[i].posX), (alienY + aliensRestantes[2].posY));
-                    }
-                    else if (i==3){
-                        c.drawImage(alien_linha4, (alienX + aliensRestantes[i].posX), (alienY + aliensRestantes[3].posY));
-                    }
-                    else if (i==4){
-                        c.drawImage(alien_linha5, (alienX + aliensRestantes[i].posX), (alienY + aliensRestantes[4].posY));
-                    }
-                    else if (i==5){
-                        c.drawImage(alien_linha1, (alienX + aliensRestantes[i].posX), (alienY + aliensRestantes[0].posY));
-                    }
-                    else if (i==6){
-                        c.drawImage(alien_linha2, (alienX + aliensRestantes[i].posX), (alienY + aliensRestantes[1].posY));
-                    }
-                    else if (i==7){
-                        c.drawImage(alien_linha3, (alienX + aliensRestantes[i].posX), (alienY + aliensRestantes[2].posY));
-                    }
-                    else if(i==8){
-                        c.drawImage(alien_linha4, (alienX + aliensRestantes[i].posX), (alienY + aliensRestantes[3].posY));
-                    }
-                    else if(i==9){
-                        c.drawImage(alien_linha5, (alienX + aliensRestantes[i].posX), (alienY + aliensRestantes[4].posY));
-                    }
-                    else if (i==10){
-                        c.drawImage(alien_linha1, (alienX + aliensRestantes[i].posX), (alienY + aliensRestantes[0].posY));
-                    }
-                    else if (i==11){
-                        c.drawImage(alien_linha2, (alienX + aliensRestantes[i].posX), (alienY + aliensRestantes[1].posY));
-                    }
-                    else if(i==12){
-                        c.drawImage(alien_linha3, (alienX + aliensRestantes[i].posX), (alienY + aliensRestantes[2].posY));
-                    }
-                    else if(i==13){
-                        c.drawImage(alien_linha4, (alienX + aliensRestantes[i].posX), (alienY + aliensRestantes[3].posY));
-                    }
-                    else if (i==14){
-                        c.drawImage(alien_linha5, (alienX + aliensRestantes[i].posX), (alienY + aliensRestantes[4].posY));
-                    }
-                    else if (i==15){
-                        c.drawImage(alien_linha1, (alienX + aliensRestantes[i].posX), (alienY + aliensRestantes[0].posY));
-                    }
-                    else if(i==16){
-                        c.drawImage(alien_linha2, (alienX + aliensRestantes[i].posX), (alienY + aliensRestantes[1].posY));
-                    }
-                    else if(i==17){
-                        c.drawImage(alien_linha3, (alienX + aliensRestantes[i].posX), (alienY + aliensRestantes[2].posY));
-                    }
-                    else if (i==18){
-                        c.drawImage(alien_linha4, (alienX + aliensRestantes[i].posX), (alienY + aliensRestantes[3].posY));
-                    }
-                    else if (i==19){
-                        c.drawImage(alien_linha5, (alienX + aliensRestantes[i].posX), (alienY + aliensRestantes[4].posY));
-                    }
-                    else if(i==20){
-                        c.drawImage(alien_linha1, (alienX + aliensRestantes[i].posX), (alienY + aliensRestantes[0].posY));
-                    }
-                    else if(i==21){
-                        c.drawImage(alien_linha2, (alienX + aliensRestantes[i].posX), (alienY + aliensRestantes[1].posY));
-                    }
-                    else if (i==22){
-                        c.drawImage(alien_linha3, (alienX + aliensRestantes[i].posX), (alienY + aliensRestantes[2].posY));
-                    }
-                    else if (i==23){
-                        c.drawImage(alien_linha4, (alienX + aliensRestantes[i].posX), (alienY + aliensRestantes[3].posY));
-                    }
-                    else if(i==24){
-                        c.drawImage(alien_linha5, (alienX + aliensRestantes[i].posX), (alienY + aliensRestantes[4].posY));
-                    }
-                    else if(i==25){
-                        c.drawImage(alien_linha1, (alienX + aliensRestantes[i].posX), (alienY + aliensRestantes[0].posY));
-                    }
-                    else if (i==26){
-                        c.drawImage(alien_linha2, (alienX + aliensRestantes[i].posX), (alienY + aliensRestantes[1].posY));
-                    }
-                    else if (i==27){
-                        c.drawImage(alien_linha3, (alienX + aliensRestantes[i].posX), (alienY + aliensRestantes[2].posY));
-                    }
-                    else if(i==28){
-                        c.drawImage(alien_linha4, (alienX + aliensRestantes[i].posX), (alienY + aliensRestantes[3].posY));
-                    }
-                    else if(i==29){
-                        c.drawImage(alien_linha5, (alienX + aliensRestantes[i].posX), (alienY + aliensRestantes[4].posY));
-                    }
-                    else if (i==30){
-                        c.drawImage(alien_linha1, (alienX + aliensRestantes[i].posX), (alienY + aliensRestantes[0].posY));
-                    }
-                    else if (i==31){
-                        c.drawImage(alien_linha2, (alienX + aliensRestantes[i].posX), (alienY + aliensRestantes[1].posY));
-                    }
-                    else if(i==32){
-                        c.drawImage(alien_linha3, (alienX + aliensRestantes[i].posX), (alienY + aliensRestantes[2].posY));
-                    }
-                    else if(i==33){
-                        c.drawImage(alien_linha4, (alienX + aliensRestantes[i].posX), (alienY + aliensRestantes[3].posY));
-                    }
-                    else if (i==34){
-                        c.drawImage(alien_linha5, (alienX + aliensRestantes[i].posX), (alienY + aliensRestantes[4].posY));
-                    }
-                    else if (i==35){
-                        c.drawImage(alien_linha1, (alienX + aliensRestantes[i].posX), (alienY + aliensRestantes[0].posY));
-                    }
-                    else if (i==36){
-                        c.drawImage(alien_linha2, (alienX + aliensRestantes[i].posX), (alienY + aliensRestantes[1].posY));
-                    }
-                    else if (i==37){
-                        c.drawImage(alien_linha3, (alienX + aliensRestantes[i].posX), (alienY + aliensRestantes[2].posY));
-                    }
-                    else if (i==38){
-                        c.drawImage(alien_linha4, (alienX + aliensRestantes[i].posX), (alienY + aliensRestantes[3].posY));
-                    }
-                    else if (i==39){
-                        c.drawImage(alien_linha5, (alienX + aliensRestantes[i].posX), (alienY + aliensRestantes[4].posY));
-                    }
-                    else if (i==40){
-                        c.drawImage(alien_linha1, (alienX + aliensRestantes[i].posX), (alienY + aliensRestantes[0].posY));
-                    }
-                    else if (i==41){
-                        c.drawImage(alien_linha2, (alienX + aliensRestantes[i].posX), (alienY + aliensRestantes[1].posY));
-                    }
-                    else if (i==42){
-                        c.drawImage(alien_linha3, (alienX + aliensRestantes[i].posX), (alienY + aliensRestantes[2].posY));
-                    }
-                    else if (i==43){
-                        c.drawImage(alien_linha4, (alienX + aliensRestantes[i].posX), (alienY + aliensRestantes[3].posY));
-                    }
-                    else if (i==44){
-                        c.drawImage(alien_linha5, (alienX + aliensRestantes[i].posX), (alienY + aliensRestantes[4].posY));
-                    }
-                    }
-                    c.fillText
+                    if (aliensRestantes[i].posY == 35){
+                        c.drawImage(alien_linha[0], (alienX + aliensRestantes[i].posX), (alienY + aliensRestantes[i].posY));
+                    }
+                    else if (aliensRestantes[i].posY == 85){
+                        c.drawImage(alien_linha[1], (alienX + aliensRestantes[i].posX), (alienY + aliensRestantes[i].posY));
+                    }
+                    else if (aliensRestantes[i].posY == 135){
+                        c.drawImage(alien_linha[2], (alienX + aliensRestantes[i].posX), (alienY + aliensRestantes[i].posY));
+                    }
+                    else if (aliensRestantes[i].posY == 185){
+                        c.drawImage(alien_linha[3], (alienX + aliensRestantes[i].posX), (alienY + aliensRestantes[i].posY));
+                    }
+                    else if (aliensRestantes[i].posY == 235){
+                        c.drawImage(alien_linha[4], (alienX + aliensRestantes[i].posX), (alienY + aliensRestantes[i].posY));
+                    }
                     if ((aliensRestantes[i].posY + alienY + 30) >= 600){
                         fimDeJogo();
                     }

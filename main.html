@@ -59,7 +59,7 @@ body {
     var alienLinhas = [7, 97, 187, 277, 367, 457, 547, 637, 727];
     var alienColunas = [35, 85, 135, 185, 235];
     var aliensRestantes = [];
-    var alienVermelhoLinhas = [900, 1100, 1300, 1500];
+    var alienVermelhoLinhas = [(Math.random()*500+800)];
     var alienVermelhoColunas = [30];
 
     const C_ALTURA = 700;
@@ -85,7 +85,7 @@ body {
         carregarImagens();
 
         setInterval("moverAliens()", velocidadeAlien);
-        setInterval("moverAliensVermelhos()", velocidadeAlien*2);
+        setInterval("moverAliensVermelhos()", velocidadeAlien);
         setInterval("alienAtingido()", 6);
     }
     function posicionarAlien() {
@@ -191,6 +191,9 @@ body {
                 c.drawImage(alienVermelho, (alienVermelhoX + aliensRestantes[i].posX - 1), (alienVermelhoY + aliensRestantes[i].posY - 1))
             }
         }
+        if (alienVermelhoX + aliensRestantes[45].posX == -26){
+            cont++;
+        }
     }
     function alienAtingido(){
         for(var i = 0; i < 45; i++){
@@ -215,26 +218,22 @@ body {
                 }
             }
         }
-        for(var j = 45; j < 49;j++){
-            if ((laserYcanhao >= (alienVermelhoY + aliensRestantes[j].posY)) && (laserYcanhao <= (alienVermelhoY + aliensRestantes[j].posY + 34)) && 
-                (impactolaserXcanhao >= (alienVermelhoX + aliensRestantes[j].posX - 5)) && (impactolaserXcanhao <= (alienVermelhoX + aliensRestantes[j].posX + 30))){
-                 if (!aliensRestantes[j].foiAtingido){
-                    if (i==45||i==46||i==47||i==48||i==49){
-                        score+=Math.round(Math.random()*100);
+        if ((laserYcanhao >= (alienVermelhoY + aliensRestantes[45].posY)) && (laserYcanhao <= (alienVermelhoY + aliensRestantes[45].posY + 34)) && 
+                (impactolaserXcanhao >= (alienVermelhoX + aliensRestantes[45].posX - 5)) && (impactolaserXcanhao <= (alienVermelhoX + aliensRestantes[45].posX + 30))){
+                 if (!aliensRestantes[45].foiAtingido){
+                    if (i=45){
+                    score+=Math.round(Math.random()*100);
                     }
                     c.fillStyle = "#003366";
-                    c.fillRect((alienVermelhoX + aliensRestantes[j].posX - 2), (alienVermelhoY + aliensRestantes[j].posY - 2), 50, 50);
-                    aliensRestantes[j].foiAtingido = true;
+                    c.fillRect((alienVermelhoX + aliensRestantes[45].posX - 2), (alienVermelhoY + aliensRestantes[45].posY - 2), 50, 50);
+                    aliensRestantes[45].foiAtingido = true;
                     c.fillRect(impactolaserXcanhao, laserYcanhao, 6, 19);
                     laserYcanhao = 0;
                     cont++;
                  }
             }
-        }
-        for(i=45;i<aliensRestantes.length;i++){
-            if(cont==48 && (aliensRestantes[i].posX>800 ||aliensRestantes[i].posX<0) ){
-                fimDeJogoVitoria();
-            }
+        if(cont==46){
+            fimDeJogoVitoria();     
         }
     }    
 

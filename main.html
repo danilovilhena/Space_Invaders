@@ -44,12 +44,16 @@ body {
     var canhaoY = 600;
     var laserXcanhao = 410;
     var laserYcanhao = 500;
+    var laserXalien;
+    var laserYalien;
     var alienX = 0;
     var alienY = 50;
     var alienVermelhoX = 0;
     var alienVermelhoY = 10;
     var inicioLaser = false;
+    var inicioLaserAlien=true;
     var impactolaserXcanhao;
+    var impactolaserXalien;
     var laserMovendo;
     var velocidadeAlien = 30;
     var posicao = 0;
@@ -59,7 +63,7 @@ body {
     var alienLinhas = [7, 97, 187, 277, 367, 457, 547, 637, 727];
     var alienColunas = [35, 85, 135, 185, 235];
     var aliensRestantes = [];
-    var alienVermelhoLinhas = [(Math.random()*500+800)];
+    var alienVermelhoLinhas = [(Math.random()*500+800),(Math.random()*500+1200), (Math.random()*500+1600),(Math.random()*500+2000)];
     var alienVermelhoColunas = [30];
 
     const C_ALTURA = 700;
@@ -87,6 +91,8 @@ body {
         setInterval("moverAliens()", velocidadeAlien);
         setInterval("moverAliensVermelhos()", velocidadeAlien);
         setInterval("alienAtingido()", 6);
+        setInterval("canhaoAtingido()", 600);
+        setInterval("laserAlienInterval()", 4000);
     }
     function posicionarAlien() {
         for (var i = 0; i < alienLinhas.length; i++){
@@ -190,9 +196,17 @@ body {
                 c.fillRect((alienVermelhoX + aliensRestantes[i].posX), (alienVermelhoY + aliensRestantes[i].posY - 1), 200, 50);
                 c.drawImage(alienVermelho, (alienVermelhoX + aliensRestantes[i].posX - 1), (alienVermelhoY + aliensRestantes[i].posY - 1))
             }
-        }
-        if (alienVermelhoX + aliensRestantes[45].posX == -26){
+            if (alienVermelhoX + aliensRestantes[i].posX == -26){
             cont++;
+            }
+        }
+    }
+    function canhaoAtingido(){
+        if ((impactolaserXalien >= (canhaoX - 5)) && (impactolaserXalien <= (canhaoX + 30))){
+            vidas--;
+            if(vidas==0){
+                fimDeJogo();
+            }
         }
     }
     function alienAtingido(){
@@ -218,20 +232,22 @@ body {
                 }
             }
         }
-        if ((laserYcanhao >= (alienVermelhoY + aliensRestantes[45].posY)) && (laserYcanhao <= (alienVermelhoY + aliensRestantes[45].posY + 34)) && 
-                (impactolaserXcanhao >= (alienVermelhoX + aliensRestantes[45].posX - 5)) && (impactolaserXcanhao <= (alienVermelhoX + aliensRestantes[45].posX + 30))){
-                 if (!aliensRestantes[45].foiAtingido){
-                    if (i=45){
+        for (var j = 45; j < aliensRestantes.length; j++){
+        if ((laserYcanhao >= (alienVermelhoY + aliensRestantes[j].posY)) && (laserYcanhao <= (alienVermelhoY + aliensRestantes[j].posY + 34)) && 
+                (impactolaserXcanhao >= (alienVermelhoX + aliensRestantes[j].posX - 5)) && (impactolaserXcanhao <= (alienVermelhoX + aliensRestantes[j].posX + 30))){
+                 if (!aliensRestantes[j].foiAtingido){
+                    if (j==45||j==46||j==47||j==48){
                     score+=Math.round(Math.random()*100);
                     }
                     c.fillStyle = "#003366";
-                    c.fillRect((alienVermelhoX + aliensRestantes[45].posX - 2), (alienVermelhoY + aliensRestantes[45].posY - 2), 50, 50);
-                    aliensRestantes[45].foiAtingido = true;
+                    c.fillRect((alienVermelhoX + aliensRestantes[j].posX - 2), (alienVermelhoY + aliensRestantes[j].posY - 2), 50, 50);
+                    aliensRestantes[j].foiAtingido = true;
                     c.fillRect(impactolaserXcanhao, laserYcanhao, 6, 19);
                     laserYcanhao = 0;
                     cont++;
                  }
             }
+        }
         if(cont==46){
             fimDeJogoVitoria();     
         }
@@ -335,6 +351,30 @@ body {
             inicioLaser = false;
             laserYcanhao = 570;
         }
+    }
+    function laserAlienInterval(){
+        if (Math.random()>0.1){
+            inicioLaserAlien=true;
+            laserXalien=aliensRestantes[Math.ceil(Math.random()*44)].posX;
+            laserYalien=aliensRestantes[Math.ceil(Math.random()*4)].posY;
+            impactolaserXalien=laserXalien;
+            laserMovendo = setInterval("dispararLaserAlien()", 5);
+        }
+    }
+    function dispararLaserAlien(){ 
+            if (inicioLaserAlien && (laserYalien >= 60)){
+                laserYalien += 10;
+                c.fillStyle = "#003366";
+                c.fillRect(impactolaserXalien, (laserYalien+10), 6, 19);
+                
+                if (laserYalien >= 70){
+                    c.drawImage(laser, impactolaserXalien, laserYalien);
+                }
+            }
+            if (laserYalien == 600){
+                clearInterval(dispararLaserAlien);
+
+            }
     }
 </script>
 </html>

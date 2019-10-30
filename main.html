@@ -17,13 +17,13 @@ body {
 
 #score {
     color: #003366;
-    font-family: Roboto;
+    font-family: "Trebuchet MS", Helvetica, sans-serif;
     font-size: 200%;
     position: left;
 }
 #vidas {
     color: #003366;
-    font-family: Roboto;
+    font-family: "Trebuchet MS", Helvetica, sans-serif;
     font-size: 200%;
     position: left;
 }
@@ -203,7 +203,7 @@ body {
         }
     }
     function canhaoAtingido(){
-        if ((impactolaserXalien >= (canhaoX - 7)) && (impactolaserXalien <= (canhaoX + 30)) && (laserYalien >= canhaoY) && (laserYalien< canhaoY + 50)){
+        if ((impactolaserXalien >= (canhaoX - 7)) && (impactolaserXalien <= (canhaoX + 30)) && (laserYalien >= canhaoY-10) && (laserYalien< canhaoY + 50)){
             vidas--;
             c.drawImage(canhao, canhaoX, canhaoY);
             if(vidas==0){

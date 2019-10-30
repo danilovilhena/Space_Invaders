@@ -93,7 +93,7 @@ body {
         setInterval("moverAliensVermelhos()", velocidadeAlien);
         setInterval("alienAtingido()", 6);
         setInterval("canhaoAtingido()", 600);
-        setInterval("laserAlienInterval()", 4000);
+        setInterval("laserAlienInterval()", 8000);
     }
     function posicionarAlien() {
         for (var i = 0; i < alienLinhas.length; i++){
@@ -120,29 +120,29 @@ body {
 
     function carregarImagens() {
         canhao = new Image();
-        canhao.src = "canhao.png";
+        canhao.src = "icons/canhao.png";
         canhao.onload = function(){
             c.drawImage(canhao, canhaoX, canhaoY);
         }
         laser = new Image();
-        laser.src = "laser.png";
+        laser.src = "icons/laser.png";
         alien_linha[0] = new Image();
-        alien_linha[0].src = "alien_linha1.gif";
+        alien_linha[0].src = "icons/alien_linha1.gif";
 
         alien_linha[1] = new Image();
-        alien_linha[1].src = "alien_linha2.gif";
+        alien_linha[1].src = "icons/alien_linha2.gif";
 
         alien_linha[2] = new Image();
-        alien_linha[2].src = "alien_linha3.png";
+        alien_linha[2].src = "icons/alien_linha3.png";
 
         alien_linha[3] = new Image();
-        alien_linha[3].src = "alien_linha4.gif";
+        alien_linha[3].src = "icons/alien_linha4.gif";
 
         alien_linha[4] = new Image();
-        alien_linha[4].src = "alien_linha5.png";
+        alien_linha[4].src = "icons/alien_linha5.png";
 
         alienVermelho = new Image();
-        alienVermelho.src = "alien_vermelho.gif";
+        alienVermelho.src = "icons/alien_vermelho.gif";
     }
 
     function moverAliens(){
@@ -203,8 +203,9 @@ body {
         }
     }
     function canhaoAtingido(){
-        if ((impactolaserXalien >= (canhaoX - 5)) && (impactolaserXalien <= (canhaoX + 30))){
+        if ((impactolaserXalien >= (canhaoX - 7)) && (impactolaserXalien <= (canhaoX + 30)) && (laserYalien >= canhaoY) && (laserYalien< canhaoY + 50)){
             vidas--;
+            c.drawImage(canhao, canhaoX, canhaoY);
             if(vidas==0){
                 fimDeJogo();
             }
@@ -374,7 +375,7 @@ body {
             laserXalien=aliensRestantes[Math.ceil(Math.random()*44)].posX + alienX;
             laserYalien=aliensRestantes[Math.ceil(Math.random()*4)].posY+ alienY;
             impactolaserXalien=laserXalien;
-            laserMovendoAlien = setInterval("dispararLaserAlien()", 100);
+            laserMovendoAlien = setInterval("dispararLaserAlien()", 200);
         }
     }
 </script>

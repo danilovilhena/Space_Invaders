@@ -55,6 +55,7 @@ body {
     var impactolaserXcanhao;
     var impactolaserXalien;
     var laserMovendo;
+    var laserMovendoAlien;
     var velocidadeAlien = 30;
     var posicao = 0;
     var posicaoVermelho = 0;
@@ -352,29 +353,29 @@ body {
             laserYcanhao = 570;
         }
     }
-    function laserAlienInterval(){
-        if (Math.random()>0.1){
-            inicioLaserAlien=true;
-            laserXalien=aliensRestantes[Math.ceil(Math.random()*44)].posX;
-            laserYalien=aliensRestantes[Math.ceil(Math.random()*4)].posY;
-            impactolaserXalien=laserXalien;
-            laserMovendo = setInterval("dispararLaserAlien()", 5);
-        }
-    }
     function dispararLaserAlien(){ 
             if (inicioLaserAlien && (laserYalien >= 60)){
                 laserYalien += 10;
                 c.fillStyle = "#003366";
-                c.fillRect(impactolaserXalien, (laserYalien+10), 6, 19);
+                c.fillRect(impactolaserXalien, (laserYalien-10), 6, 19);
                 
                 if (laserYalien >= 70){
                     c.drawImage(laser, impactolaserXalien, laserYalien);
                 }
             }
-            if (laserYalien == 600){
-                clearInterval(dispararLaserAlien);
-
+            if (laserYalien > 600){
+                c.fillStyle = "#003366";
+                c.fillRect(impactolaserXalien, (laserYalien-10), 6, 119);
             }
+    }
+    function laserAlienInterval(){
+        if (Math.random()>0.1){
+            inicioLaserAlien=true;
+            laserXalien=aliensRestantes[Math.ceil(Math.random()*44)].posX + alienX;
+            laserYalien=aliensRestantes[Math.ceil(Math.random()*4)].posY+ alienY;
+            impactolaserXalien=laserXalien;
+            laserMovendoAlien = setInterval("dispararLaserAlien()", 100);
+        }
     }
 </script>
 </html>

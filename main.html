@@ -9,7 +9,8 @@
 <button id="botao_placar" style="position: absolute; top:570px; left:535px;" onclick="telaPlacar()">Ranking das melhores
     pontuações</button>
 <button id="botao_voltar" style="position: absolute; top:710px; left:320px;" onclick="telaInicial()">Voltar</button>
-<input id="player_id" type="text" placeholder="Insira 3 letras">
+<input id="player_id" type="text" placeholder="Insira 3 letras" maxlength="3" onkeyup="
+    this.value=this.value.toUpperCase();">
 <style type="text/css" media="screen">
     #tela {
         position: absolute;
@@ -86,11 +87,14 @@
     let botaoVoltar;
     let playerNome;
     let nome;
+    let barrierInicial;
+    let barrierMedio;
+    let barrierFinal;
 
     let canhaoX = 390;
     let canhaoY = 600;
     let laserXcanhao = 410;
-    let laserYcanhao = 500;
+    let laserYcanhao = 560;
     let laserXalien;
     let laserYalien;
     let alienX = 0;
@@ -103,24 +107,31 @@
     let impactolaserXalien;
     let laserMovendo;
     let laserMovendoAlien;
-    let velocidadeAlien = 30;
+    let velocidadeAlien = 40;
     let posicao = 0;
     let posicaoVermelho = 0;
     let cont = 0;
+    let somInicial = new Audio('audio/intro_sound.wav');
     let somDeDerrota = new Audio("audio/player_death.wav");
-    let somDeVitoria;
+    let somDeVitoria = new Audio("audio/victory_sound.wav");
+    let somDeMovimento = new Audio("audio/ship_sound.wav");
+    let somDeMovimentoRapido = new Audio("audio/ship_sound_fast.mp3");
+    let somDeMovimentoVermelho = new Audio("audio/red_ship_sound.wav");
+
 
     let alienLinhas = [7, 97, 187, 277, 367, 457, 547, 637, 727];
     let alienColunas = [35, 85, 135, 185, 235];
     let aliensRestantes = [];
+    let barreirasRestantes = [];
 
-    let alienVermelhoLinhas = [(Math.random() * 500 + 800), (Math.random() * 500 + 2000)];
+    let alienVermelhoLinhas = [(Math.random() * 100 + 800), (Math.random() * 100 + 2000)];
     let alienVermelhoColunas = [30];
 
-    let scoreboard = {
-        nome: [],
-        pontos: []
-    }
+    let barreirasLinhas = [155, 305, 455, 605];
+    let barreirasColunas = [500];
+
+    let scoreboard = [];
+    scoreboard = JSON.parse(localStorage.getItem("tabela"));
 
     const C_ALTURA = 700;
     const C_LARGURA = 820;
@@ -130,12 +141,12 @@
     const TECLA_DIREITA = 39;
     const TECLA_ABAIXO = 40;
 
-    // Define função chamada ao se pressionar uma tecla
 
     telaInicial(); // Chama o menu inicial do jogo
 
     // Sub-rotinas (funções)
     function telaInicial() {
+        somInicial.play();
         botaoIniciar = document.getElementById('botao_iniciar').style.visibility = 'visible';
         botaoPlacar = document.getElementById('botao_placar').style.visibility = 'visible';
         botaoVoltar = document.getElementById('botao_voltar').style.visibility = 'hidden';
@@ -177,7 +188,6 @@
             if (key.keyCode == "13") {
                 nome = document.getElementById('player_id').value;
                 playerNome = document.getElementById('player_id').style.visibility = 'hidden';
-                scoreboard.nome[scoreboard.nome] = nome;
                 iniciar();
             }
         }
@@ -193,9 +203,44 @@
         c.font = "52px Impact";
         c.fillStyle = "#FFFFFF";
         c.fillText("RANKING DE MAIORES PONTUAÇÕES:", C_LARGURA / 2, 72);
+        c.font = "46px Impact";
+        c.fillStyle = "EBDD22";
+        c.fillText("NOME:", 250, 175);
+        c.fillText("PONTUAÇÃO:", 550, 175);
+        //Algoritmo de ordenação por seleção
+        let maior;
+        let maiorNome;
+        let index;
+        for (let i = 0; i < scoreboard.length; i++) {
+            maior = scoreboard[i].pontos;
+            maiorNome = scoreboard[i].nome;
+            index = i;
+            for (let j = i + 1; j < scoreboard.length; j++) {
+                if (scoreboard[j].pontos > maior) {
+                    maior = scoreboard[j].pontos;
+                    maiorNome = scoreboard[j].nome;
+                    index = j;
+                }
+            }
+            scoreboard[index].pontos = scoreboard[i].pontos;
+            scoreboard[index].nome = scoreboard[i].nome;
+            scoreboard[i].pontos = maior;
+            scoreboard[i].nome = maiorNome;
+        }
+        //Mostrar o placar
+        for (let i = 0; i < 10; i++) {
+            c.textAlign = "center";
+            c.font = "42px Impact";
+            c.fillStyle = "#FFFFFF";
+            c.fillText(scoreboard[i].nome, 250, 225 + 48 * i);
+            c.fillText(scoreboard[i].pontos, 550, 225 + 48 * i);
+        }
     }
 
     function iniciar() {
+        somInicial.pause();
+        somDeMovimentoVermelho.play();
+        somDeMovimento.play();
         onkeydown = moverCanhao;
         botaoIniciar = document.getElementById('botao_iniciar').style.visibility = 'hidden';
         botaoPlacar = document.getElementById('botao_placar').style.visibility = 'hidden';
@@ -206,10 +251,12 @@
         posicionarAlien();
         posicionarAlienVermelho();
         carregarImagens();
-
+        posicionarBarreiras();
+        window.timer = setInterval("moverAliens()", velocidadeAlien);
         setInterval("moverAliens()", velocidadeAlien);
-        setInterval("moverAliensVermelhos()", velocidadeAlien);
+        setInterval("moverAliensVermelhos()", velocidadeAlien / 2);
         setInterval("alienAtingido()", 6);
+        setInterval("barreiraAtingida()", 6);
         setInterval("canhaoAtingido()", 600);
         setInterval("laserAlienIntervalo()", 8000);
     }
@@ -224,6 +271,22 @@
                 };
                 aliensRestantes[aliensRestantes.length] = novoAlien;
             }
+        }
+    }
+
+    function posicionarBarreiras() {
+        for (let i = 0; i < barreirasLinhas.length; i++) {
+            for (let j = 0; j < barreirasColunas.length; j++) {
+                let novaBarreira = {
+                    posX: barreirasLinhas[i],
+                    posY: barreirasColunas[j],
+                    foiAtingido: 0
+                };
+                barreirasRestantes[barreirasRestantes.length] = novaBarreira;
+            }
+        }
+        for (let i = 0; i < 4; i++) {
+            c.drawImage(barrierInicial, barreirasLinhas[i], barreirasColunas[0]);
         }
     }
 
@@ -263,15 +326,18 @@
 
         alienVermelho = new Image();
         alienVermelho.src = "icons/alien_vermelho.gif";
+
+        barrierInicial = new Image();
+        barrierInicial.src = "icons/barrier_inicial.png";
+
+        barrierMedio = new Image();
+        barrierMedio.src = "icons/barrier_medio.png";
+
+        barrierFinal = new Image();
+        barrierFinal.src = "icons/barrier_final.png";
     }
 
-    //function somDeAlienMovendo() {
-    //    let somAlienMovendo = new Audio("audio/alien_moving.wav");
-    //    somAlienMovendo.play();
-    //}
-
     function moverAliens() {
-        //setInterval(somDeAlienMovendo, 20000);
         if (posicao <= 65) {
             alienX += 1;
             posicao += 2;
@@ -310,7 +376,10 @@
                 else if (aliensRestantes[i].posY == 235) {
                     c.drawImage(alien_linha[4], (alienX + aliensRestantes[i].posX), (alienY + aliensRestantes[i].posY));
                 }
-                if ((aliensRestantes[i].posY + alienY + 30) >= 600) {
+                if ((aliensRestantes[i].posY + alienY) >= 570) {
+                    somDeMovimentoVermelho.pause();
+                    somDeMovimento.pause();
+                    somDeMovimentoRapido.pause();
                     somDeDerrota.play();
                     fimDeJogo();
                 }
@@ -333,9 +402,13 @@
 
     function canhaoAtingido() {
         if ((impactolaserXalien >= (canhaoX - 7)) && (impactolaserXalien <= (canhaoX + 30)) && (laserYalien >= canhaoY - 10) && (laserYalien < canhaoY + 50)) {
+            somDeDerrota.play();
             vidas--;
             c.drawImage(canhao, canhaoX, canhaoY);
             if (vidas == 0) {
+                somDeMovimentoVermelho.pause();
+                somDeMovimentoRapido.pause();
+                somDeMovimento.pause();
                 somDeDerrota.play();
                 fimDeJogo();
             }
@@ -343,12 +416,10 @@
     }
 
     function alienAtingido() {
-        let somDeAlienAtingido = new Audio("audio/alien_killed.wav");
         for (let i = 0; i < 45; i++) {
             if ((laserYcanhao >= (alienY + aliensRestantes[i].posY)) && (laserYcanhao <= (alienY + aliensRestantes[i].posY + 34)) &&
                 (impactolaserXcanhao >= (alienX + aliensRestantes[i].posX - 5)) && (impactolaserXcanhao <= (alienX + aliensRestantes[i].posX + 30))) {
                 if (!aliensRestantes[i].foiAtingido) {
-                    somDeAlienAtingido.play();
                     if (aliensRestantes[i].posY == 35) {
                         score += 40;
                     }
@@ -383,13 +454,58 @@
                 }
             }
         }
+        if (cont == 30) {
+            clearInterval(window.timer);
+            velocidadeAlien = 20;
+            window.timer = setInterval("moverAliens()", velocidadeAlien);
+            somDeMovimento.pause();
+            somDeMovimentoRapido.play();
+        }
         if (cont == 46) {
+            somDeMovimentoVermelho.pause();
+            somDeMovimentoRapido.pause();
+            somDeVitoria.play();
             fimDeJogoVitoria();
         }
     }
 
+    function barreiraAtingida() {
+        for (let i = 0; i < 4; i++) {
+            if (((laserYcanhao >= (barreirasRestantes[i].posY)) && (laserYcanhao <= (barreirasRestantes[i].posY + 34)) &&
+                (impactolaserXcanhao >= (barreirasRestantes[i].posX - 5)) && (impactolaserXcanhao <= (barreirasRestantes[i].posX + 45))) || ((laserYalien >= (barreirasRestantes[i].posY)) && (laserYalien <= (barreirasRestantes[i].posY + 34)) &&
+                    (impactolaserXalien >= (barreirasRestantes[i].posX - 5)) && (impactolaserXalien <= (barreirasRestantes[i].posX + 45)))) {
+                if (barreirasRestantes[i].foiAtingido >= 2) {
+                    c.fillStyle = "#003366";
+                    c.fillRect((barreirasRestantes[i].posX - 2), (barreirasRestantes[i].posY - 2), 50, 50);
+                }
+                if (barreirasRestantes[i].foiAtingido == 1) {
+                    barreirasRestantes[i].foiAtingido++;
+                    c.fillStyle = "#003366";
+                    c.fillRect((barreirasRestantes[i].posX - 2), (barreirasRestantes[i].posY - 2), 50, 50);
+                    c.fillRect(impactolaserXcanhao, laserYcanhao, 6, 19);
+                    laserYcanhao = 0;
+                    c.drawImage(barrierFinal, barreirasRestantes[i].posX, barreirasRestantes[i].posY);
+                    barreirasRestantes[i].foiAtingido++;
+                }
+                if (barreirasRestantes[i].foiAtingido == 0) {
+                    c.fillStyle = "#003366";
+                    c.fillRect((barreirasRestantes[i].posX - 2), (barreirasRestantes[i].posY - 2), 50, 50);
+                    c.fillRect(impactolaserXcanhao, laserYcanhao, 6, 19);
+                    laserYcanhao = 0;
+                    c.drawImage(barrierMedio, barreirasRestantes[i].posX, barreirasRestantes[i].posY);
+                    barreirasRestantes[i].foiAtingido++;
+                }
+
+            }
+        }
+    }
+
     function fimDeJogo() {
-        scoreboard.pontos[scoreboard.pontos] = score;
+        scoreboard[scoreboard.length] = {
+            nome: nome,
+            pontos: score
+        };
+        localStorage.setItem("tabela", JSON.stringify(scoreboard));
         canhaoX = 180;
         laserXcanhao = 193;
         laserYcanhao = 520;
@@ -401,12 +517,43 @@
 
         c.fillStyle = "black";
         c.fillRect(0, 0, C_LARGURA, C_ALTURA);
-
         c.textAlign = "center";
         c.font = "40px Impact";
         c.fillStyle = "#FFFFFF";
-        c.fillText("Fim de Jogo!", C_LARGURA / 2, C_ALTURA / 2);
-        c.fillText("Aperte espaço para reiniciar", C_LARGURA / 2, (C_ALTURA / 2) + 45);
+        c.fillText("Fim de Jogo!", C_LARGURA / 2, C_ALTURA / 2 + 300);
+        c.fillText("Aperte espaço para reiniciar", C_LARGURA / 2, (C_ALTURA / 2) + 345);
+        c.font = "46px Impact";
+        c.fillStyle = "EBDD22";
+        c.fillText("NOME:", 250, 50);
+        c.fillText("PONTUAÇÃO:", 550, 50);
+        //Algoritmo de ordenação por seleção
+        let maior;
+        let maiorNome;
+        let index;
+        for (let i = 0; i < scoreboard.length; i++) {
+            maior = scoreboard[i].pontos;
+            maiorNome = scoreboard[i].nome;
+            index = i;
+            for (let j = i + 1; j < scoreboard.length; j++) {
+                if (scoreboard[j].pontos > maior) {
+                    maior = scoreboard[j].pontos;
+                    maiorNome = scoreboard[j].nome;
+                    index = j;
+                }
+            }
+            scoreboard[index].pontos = scoreboard[i].pontos;
+            scoreboard[index].nome = scoreboard[i].nome;
+            scoreboard[i].pontos = maior;
+            scoreboard[i].nome = maiorNome;
+        }
+        //Mostrar o placar
+        for (let i = 0; i < 10; i++) {
+            c.textAlign = "center";
+            c.font = "42px Impact";
+            c.fillStyle = "#FFFFFF";
+            c.fillText(scoreboard[i].nome, 250, 100 + 48 * i);
+            c.fillText(scoreboard[i].pontos, 550, 100 + 48 * i);
+        }
         window.addEventListener("keydown", checkKeyPress, false);
         function checkKeyPress(key) {
             if (key.keyCode == "32") {
@@ -417,7 +564,12 @@
     }
 
     function fimDeJogoVitoria() {
-        scoreboard.pontos[scoreboard.pontos] = score;
+        localStorage.setItem("contadorlocal", 1);
+        scoreboard[scoreboard.length] = {
+            nome: nome,
+            pontos: score
+        };
+        localStorage.setItem("tabela", JSON.stringify(scoreboard));
         canhaoX = 180;
         laserXcanhao = 193;
         laserYcanhao = 520;
@@ -433,9 +585,41 @@
         c.textAlign = "center";
         c.font = "40px Impact";
         c.fillStyle = "#FFFFFF";
-        c.fillText("Parabéns, você venceu!", C_LARGURA / 2, C_ALTURA / 2);
-        c.fillText("Caso queira jogar novamente,", C_LARGURA / 2, (C_ALTURA / 2) + 90);
-        c.fillText("aperte espaço para reiniciar.", C_LARGURA / 2, (C_ALTURA / 2) + 135);
+        c.fillText("Parabéns, você venceu!", C_LARGURA / 2, C_ALTURA / 2 + 255);
+        c.fillText("Caso queira jogar novamente,", C_LARGURA / 2, (C_ALTURA / 2) + 300);
+        c.fillText("aperte espaço para reiniciar.", C_LARGURA / 2, (C_ALTURA / 2) + 345);
+        c.font = "46px Impact";
+        c.fillStyle = "EBDD22";
+        c.fillText("NOME:", 250, 50);
+        c.fillText("PONTUAÇÃO:", 550, 50);
+        //Algoritmo de ordenação por seleção
+        let maior;
+        let maiorNome;
+        let index;
+        for (let i = 0; i < scoreboard.length; i++) {
+            maior = scoreboard[i].pontos;
+            maiorNome = scoreboard[i].nome;
+            index = i;
+            for (let j = i + 1; j < scoreboard.length; j++) {
+                if (scoreboard[j].pontos > maior) {
+                    maior = scoreboard[j].pontos;
+                    maiorNome = scoreboard[j].nome;
+                    index = j;
+                }
+            }
+            scoreboard[index].pontos = scoreboard[i].pontos;
+            scoreboard[index].nome = scoreboard[i].nome;
+            scoreboard[i].pontos = maior;
+            scoreboard[i].nome = maiorNome;
+        }
+        //Mostrar o placar
+        for (let i = 0; i < 10; i++) {
+            c.textAlign = "center";
+            c.font = "42px Impact";
+            c.fillStyle = "#FFFFFF";
+            c.fillText(scoreboard[i].nome, 250, 100 + 48 * i);
+            c.fillText(scoreboard[i].pontos, 550, 100 + 48 * i);
+        }
         window.addEventListener("keydown", checkKeyPress, false);
         function checkKeyPress(key) {
             if (key.keyCode == "32") {
@@ -502,7 +686,7 @@
                 c.drawImage(laser, impactolaserXalien, laserYalien);
             }
         }
-        if (laserYalien > 600) {
+        if (laserYalien > 700) {
             c.fillStyle = "#003366";
             c.fillRect(impactolaserXalien, (laserYalien - 10), 6, 119);
         }
@@ -512,7 +696,7 @@
         if (Math.random() > 0.1) {
             inicioLaserAlien = true;
             laserXalien = aliensRestantes[Math.ceil(Math.random() * 44)].posX + alienX;
-            laserYalien = aliensRestantes[3].posY + alienY;
+            laserYalien = aliensRestantes[4].posY + alienY;
             impactolaserXalien = laserXalien;
             laserMovendoAlien = setInterval("dispararLaserAlien()", 200);
         }
